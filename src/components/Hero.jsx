@@ -4,7 +4,7 @@ import { ArrowRight, Github, Linkedin, Download } from 'lucide-react';
 import Badge from './Badge';
 import { stagger, fadeUp, slideIn } from '../config/animations';
 import characterImage from '/1764162908062.jpg';
-import CV from '/mudassirAli_FullStack_resume.pdf'
+import CV from '/mudassirAli_FullStack_CV.pdf'
 const Hero = () => {
   const [textIndex, setTextIndex] = useState(0);
   const texts = ["responsive", "scalable", "user-friendly", "modern"];
