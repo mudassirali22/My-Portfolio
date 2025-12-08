@@ -90,7 +90,7 @@ const Contact = () => {
               <input type="hidden" name="_subject" value="New Contact Form Submission!" />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_next" value="http://localhost:5173/thank-you" />
+              <input type="hidden" name="_next" value="https://mudassirali.vercel.app/thank-you" />
               <label htmlFor="name" className="text-sm font-medium text-foreground">Name</label>
               <motion.input
                 id="name"
