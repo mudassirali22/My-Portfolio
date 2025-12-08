@@ -18,7 +18,6 @@ const Contact = () => {
     const name = formData.get("name");
     const email = formData.get("email");
     const message = formData.get("message");
-    console.log({ name, email, message });
   };
 
   return (
@@ -90,7 +89,7 @@ const Contact = () => {
               <input type="hidden" name="_subject" value="New Contact Form Submission!" />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_next" value="http://localhost:5173/thank-you" />
+              <input type="hidden" name="_next" value="https://mudassirali.vercel.app" />
               <label htmlFor="name" className="text-sm font-medium text-foreground">Name</label>
               <motion.input
                 id="name"
