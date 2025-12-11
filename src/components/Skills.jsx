@@ -80,7 +80,7 @@ const Skills = () => (
             {[
               { category: "Frontend", skills: ["javascript","React","TailwindCSS","CSS","bootstrap5"] },
               { category: "Backend", skills: ["Node.js", "Express", "MongoDB"] },
-              { category: "Tools", skills: ["Git", "Postman", "VsCode"] },
+              { category: "Tools", skills: ["Git & Github", "Postman", "VsCode","Mangodb Compass"] },
             ].map((group) => (
               <div key={group.category}>
                 <h4 className="text-sm font-medium text-foreground mb-2">{group.category}</h4>
