@@ -64,23 +64,29 @@ export const skills = [
 ];
 
 export const Education_fields = [
-
   {
     id: 1,
+    course: "BS Computer Science",
+    institute: "The Virtual University Of Pakistan",
+    time: "2026 — present",
+    // certificate : "certified"
+  },
+  {
+    id: 2,
     course: "FullStack Development",
     institute: "saylani Mass IT Training Centre",
     time: "2024 — 2025",
     certificate : "certified"
   },
   {
-    id: 2,
+    id: 3,
     course: "Python Development",
     institute: "NED Academy",
     time: "2025 Sep — 2025 Nov",
     certificate : "certified"
   },
     {
-    id: 3,
+    id: 4,
     name: "Intermediate",
     institute: " board of  intermediate Larkana Board ",
     time: "2023 — 2024",
