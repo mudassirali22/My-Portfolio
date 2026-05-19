@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { sendContactEmail } from './controllers/emailController.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +35,7 @@ app.post('/api/contact', sendContactEmail);
 // Start server locally (Vercel Serverless will ignore this and use the exported app)
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
-    console.log(`🚀 Portfolio secure backend listening on port ${PORT}`);
+    console.log(`Portfolio backend is  listening on port ${PORT}`);
   });
 }
 
