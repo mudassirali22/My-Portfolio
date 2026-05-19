@@ -7,7 +7,6 @@ import Footer from "./components/layout/Footer";
 import Loader from "./components/ui/Loader";
 import Background3D from "./components/ui/Background3D";
 import ProjectModal from "./components/ui/ProjectModal";
-import Toast from "./components/ui/Toast";
 
 // Section Components
 import Hero from "./components/sections/Hero";
@@ -20,32 +19,14 @@ import Services from "./components/sections/Services";
 import Workflow from "./components/sections/Workflow";
 import Contact from "./components/sections/Contact";
 
-// Data
-import { projects, skills } from "./data/portfolioData";
-
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   
-  // Form State
-  const [formData, setFormData] = useState({ name: "", email: "", vision: "" });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState(null);
-
-  // Drag & Drop State for Skills
-  const [skillItems, setSkillItems] = useState(skills);
-  const cardRefs = useRef([]);
-  const skillsRef = useRef(null);
   const modalRef = useRef(null);
-
-  useEffect(() => {
-    setSkillItems(skills);
-  }, [skills]);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -70,27 +51,6 @@ export default function App() {
     }
   }, [isDark]);
 
-  const handleDrag = (dragIndex, point) => {
-    const hoverIndex = cardRefs.current.findIndex((ref, i) => {
-      if (i === dragIndex || !ref) return false;
-      const rect = ref.getBoundingClientRect();
-      return (
-        point.x > rect.left &&
-        point.x < rect.right &&
-        point.y > rect.top &&
-        point.y < rect.bottom
-      );
-    });
-
-    if (hoverIndex !== -1) {
-      const newItems = [...skillItems];
-      const draggedItem = newItems[dragIndex];
-      newItems.splice(dragIndex, 1);
-      newItems.splice(hoverIndex, 0, draggedItem);
-      setSkillItems(newItems);
-    }
-  };
-
   const handleProjectClick = (project) => {
     setModalLoading(true);
     setSelectedProject(project);
@@ -107,87 +67,8 @@ export default function App() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-    if (!formData.vision.trim()) {
-      newErrors.vision = "Please describe your vision";
-    } else if (formData.vision.length < 10) {
-      newErrors.vision = "Wait, tell me a bit more (at least 10 chars)";
-    }
-    return newErrors;
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-
-    fetch(`${backendUrl}/api/contact`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Server responded with an error");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.isMock) {
-          setToast({ 
-            message: "Validation passed! (Note: Configure EMAIL_USER and EMAIL_PASS in your .env for real emails.)", 
-            type: "success" 
-          });
-        } else {
-          setToast({ message: "Protocol initiated! Your message has been sent to Mudassir.", type: "success" });
-        }
-        setFormData({ name: "", email: "", vision: "" });
-        setIsSubmitting(false);
-      })
-      .catch((err) => {
-        console.error("Nodemailer fetch error:", err);
-        setToast({ message: "Connection error. Make sure the Node server is running on port 5000.", type: "error" });
-        setIsSubmitting(false);
-      });
-  };
-
-  const filteredProjects = selectedFilter === "All"
-    ? projects
-    : projects.filter(p => p.tags.includes(selectedFilter));
-
   return (
     <>
-      <AnimatePresence>
-        {toast && (
-          <Toast 
-            message={toast.message} 
-            type={toast.type} 
-            onClose={() => setToast(null)} 
-          />
-        )}
-      </AnimatePresence>
       <AnimatePresence mode="wait">
         {loading ? (
           <Loader key="loader" onComplete={() => setLoading(false)} />
@@ -213,30 +94,14 @@ export default function App() {
               <About isDark={isDark} />
               <Experience isDark={isDark} />
               <Education isDark={isDark} />
-              <Skills 
-                isDark={isDark}
-                skillItems={skillItems}
-                handleDrag={handleDrag}
-                skillsRef={skillsRef}
-                cardRefs={cardRefs}
-              />
+              <Skills isDark={isDark} />
               <Projects 
                 isDark={isDark} 
-                selectedFilter={selectedFilter}
-                setSelectedFilter={setSelectedFilter}
-                filteredProjects={filteredProjects}
                 handleProjectClick={handleProjectClick}
               />
               <Services isDark={isDark} />
               <Workflow isDark={isDark} />
-              <Contact 
-                isDark={isDark}
-                formData={formData}
-                errors={errors}
-                isSubmitting={isSubmitting}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-              />
+              <Contact isDark={isDark} />
             </main>
 
             <Footer isDark={isDark} />

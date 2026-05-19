@@ -1,16 +1,39 @@
 import { motion } from "motion/react";
 import Section from "../layout/Section";
 import SkillCard from "../ui/SkillCard";
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { itemVariants, skills } from "../../data/portfolioData";
 
-export default function Skills({
-  isDark,
-  skillItems,
-  handleDrag,
-  skillsRef,
-  cardRefs
-}) {
+export default function Skills({ isDark }) {
+  const [skillItems, setSkillItems] = useState(skills);
+  const cardRefs = useRef([]);
+  const skillsRef = useRef(null);
+
+  useEffect(() => {
+    setSkillItems(skills);
+  }, [skills]);
+
+  const handleDrag = (dragIndex, point) => {
+    const hoverIndex = cardRefs.current.findIndex((ref, i) => {
+      if (i === dragIndex || !ref) return false;
+      const rect = ref.getBoundingClientRect();
+      return (
+        point.x > rect.left &&
+        point.x < rect.right &&
+        point.y > rect.top &&
+        point.y < rect.bottom
+      );
+    });
+
+    if (hoverIndex !== -1) {
+      const newItems = [...skillItems];
+      const draggedItem = newItems[dragIndex];
+      newItems.splice(dragIndex, 1);
+      newItems.splice(hoverIndex, 0, draggedItem);
+      setSkillItems(newItems);
+    }
+  };
+
   return (
     <Section id="skills" className={`overflow-hidden !pb-8 !pt-2 ${isDark ? 'bg-slate-900/5' : 'bg-slate-100/50'}`}>
       <div className="max-w-6xl mx-auto space-y-14">

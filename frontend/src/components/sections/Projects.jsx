@@ -1,16 +1,16 @@
 import { motion } from "motion/react";
 import Section from "../layout/Section";
 import ProjectCard from "../ui/ProjectCard";
-import React from 'react';
-import { itemVariants, filters } from "../../data/portfolioData";
+import React, { useState } from 'react';
+import { itemVariants, filters, projects } from "../../data/portfolioData";
 
-export default function Projects({
-  isDark,
-  selectedFilter,
-  setSelectedFilter,
-  filteredProjects,
-  handleProjectClick
-}) {
+export default function Projects({ isDark, handleProjectClick }) {
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
+  const filteredProjects = selectedFilter === "All"
+    ? projects
+    : projects.filter(p => p.tags.includes(selectedFilter));
+
   return (
     <Section id="projects" className={isDark ? "bg-slate-900/15" : "bg-slate-100"}>
       <div className="max-w-6xl mx-auto space-y-12">

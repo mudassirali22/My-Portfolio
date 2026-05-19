@@ -1,20 +1,95 @@
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Mail, Linkedin } from "lucide-react";
 import Section from "../layout/Section";
 import Magnetic from "../ui/Magnetic";
-import React from 'react';
+import React, { useState } from 'react';
 import { itemVariants } from "../../data/portfolioData";
+import Toast from "../ui/Toast";
 
-export default function Contact({
-  isDark,
-  formData,
-  errors,
-  isSubmitting,
-  handleInputChange,
-  handleSubmit
-}) {
+export default function Contact({ isDark }) {
+  const [formData, setFormData] = useState({ name: "", email: "", vision: "" });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+    if (!formData.vision.trim()) {
+      newErrors.vision = "Please describe your vision";
+    } else if (formData.vision.length < 10) {
+      newErrors.vision = "Wait, tell me a bit more (at least 10 chars)";
+    }
+    return newErrors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+    fetch(`${backendUrl}/api/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Server responded with an error");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.isMock) {
+          setToast({ 
+            message: "Validation passed! (Note: Configure EMAIL_USER and EMAIL_PASS in your .env for real emails.)", 
+            type: "success" 
+          });
+        } else {
+          setToast({ message: "Protocol initiated! Your message has been sent to Mudassir.", type: "success" });
+        }
+        setFormData({ name: "", email: "", vision: "" });
+        setIsSubmitting(false);
+      })
+      .catch((err) => {
+        console.error("Nodemailer fetch error:", err);
+        setToast({ message: "Connection error. Make sure the Node server is running on port 5000.", type: "error" });
+        setIsSubmitting(false);
+      });
+  };
+
   return (
-    <Section id="contact" className="min-h-screen flex items-center py-20 md:py-32">
+    <>
+      <AnimatePresence>
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
+      </AnimatePresence>
+      <Section id="contact" className="min-h-screen flex items-center py-20 md:py-32">
       <div className="glass p-6 sm:p-10 md:p-16 rounded-3xl border border-white/10 relative overflow-hidden max-w-6xl mx-auto group w-full">
         <div className="absolute -top-40 -right-40 w-[30rem] h-[30rem] bg-accent-purple/10 blur-[130px] group-hover:scale-110 transition-transform duration-[2000ms]" />
 
@@ -111,5 +186,6 @@ export default function Contact({
         </div>
       </div>
     </Section>
+    </>
   );
 }
