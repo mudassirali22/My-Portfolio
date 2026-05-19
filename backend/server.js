@@ -26,7 +26,6 @@ app.get('/', (req, res) => {
 // Main contact API endpoint
 app.post('/api/contact', sendContactEmail);
 
-// Start server locally (Vercel Serverless will ignore this and use the exported app)
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Portfolio backend is listening on port ${PORT}`);
